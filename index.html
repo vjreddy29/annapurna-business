@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Annapurna Business</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#23241F">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Annapurna">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#EFEADD;
+    --card:#FBF9F2;
+    --ink:#23241F;
+    --ink-soft:#5B584C;
+    --gold:#B8860B;
+    --gold-deep:#8A6508;
+    --rust:#9C4A2E;
+    --leaf:#4C6444;
+    --line:#D8D2BF;
+    --line-soft:#E6E1D2;
+    --danger:#9C3B3B;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:'Inter',sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.display{font-family:'Fraunces',serif;}
+  .mono{font-family:'IBM Plex Mono',monospace; font-variant-numeric:tabular-nums;}
+
+  .app{display:flex; min-height:100vh;}
+
+  /* Sidebar */
+  .sidebar{
+    width:220px; flex-shrink:0; background:var(--ink); color:#EFEADD;
+    padding:28px 0 20px; display:flex; flex-direction:column;
+  }
+  .brand{padding:0 22px 22px; border-bottom:1px solid rgba(239,234,221,0.15); margin-bottom:14px;}
+  .brand-mark{width:34px;height:34px;margin-bottom:10px;}
+  .brand-title{font-family:'Fraunces',serif; font-size:19px; font-weight:600; letter-spacing:0.2px;}
+  .brand-sub{font-size:10.5px; color:#C7C2AE; letter-spacing:1.5px; text-transform:uppercase; margin-top:2px;}
+  .nav{display:flex; flex-direction:column; gap:2px; padding:0 12px;}
+  .nav button{
+    all:unset; cursor:pointer; padding:11px 14px; border-radius:7px; font-size:14px;
+    color:#D9D5C4; display:flex; align-items:center; gap:10px; transition:background .15s;
+  }
+  .nav button:hover{background:rgba(239,234,221,0.08);}
+  .nav button.active{background:var(--gold); color:#23241F; font-weight:600;}
+  .nav-icon{width:16px; text-align:center; opacity:0.9;}
+  .sidebar-foot{margin-top:auto; padding:14px 22px 0; font-size:11px; color:#8f8a76; border-top:1px solid rgba(239,234,221,0.12);}
+
+  /* Main */
+  .main{flex:1; padding:34px 42px; max-width:1180px;}
+  .page-head{display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:26px; flex-wrap:wrap; gap:12px;}
+  .page-title{font-size:26px; font-weight:600; margin:0;}
+  .page-sub{color:var(--ink-soft); font-size:13.5px; margin-top:4px;}
+
+  .btn{
+    all:unset; cursor:pointer; background:var(--ink); color:var(--bg); padding:10px 18px;
+    border-radius:6px; font-size:13.5px; font-weight:600; letter-spacing:.2px;
+  }
+  .btn:hover{background:#3a3c33;}
+  .btn.gold{background:var(--gold); color:#23241F;}
+  .btn.gold:hover{background:var(--gold-deep); color:#fff;}
+  .btn.ghost{background:transparent; color:var(--ink); border:1px solid var(--line);}
+  .btn.ghost:hover{background:var(--line-soft);}
+  .btn.small{padding:7px 12px; font-size:12.5px;}
+  .btn.danger{background:transparent; color:var(--danger); border:1px solid #e0c4c4;}
+
+  .card{background:var(--card); border:1px solid var(--line); border-radius:10px; padding:20px 22px;}
+  .grid{display:grid; gap:16px;}
+  .grid.cols-4{grid-template-columns:repeat(4,1fr);}
+  .grid.cols-3{grid-template-columns:repeat(3,1fr);}
+  .grid.cols-2{grid-template-columns:repeat(2,1fr);}
+  @media(max-width:900px){.grid.cols-4,.grid.cols-3,.grid.cols-2{grid-template-columns:1fr 1fr;}}
+
+  .stat-label{font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--ink-soft); margin-bottom:6px;}
+  .stat-value{font-size:24px; font-weight:600; font-family:'IBM Plex Mono',monospace;}
+  .stat-value.small{font-size:18px;}
+
+  table{width:100%; border-collapse:collapse; font-size:13.5px;}
+  th{text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:0.6px; color:var(--ink-soft); font-weight:600; padding:9px 10px; border-bottom:1px solid var(--line);}
+  td{padding:10px 10px; border-bottom:1px solid var(--line-soft);}
+  tr:last-child td{border-bottom:none;}
+  tr.clickable:hover{background:var(--line-soft); cursor:pointer;}
+  .num{font-family:'IBM Plex Mono',monospace; text-align:right;}
+
+  input, select{
+    width:100%; padding:9px 11px; border:1px solid var(--line); border-radius:6px; background:#fff;
+    font-family:'Inter',sans-serif; font-size:13.5px; color:var(--ink);
+  }
+  label{font-size:11.5px; text-transform:uppercase; letter-spacing:0.5px; color:var(--ink-soft); display:block; margin-bottom:5px; font-weight:600;}
+  .field{margin-bottom:14px;}
+  .field-row{display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:12px;}
+
+  .modal-bg{position:fixed; inset:0; background:rgba(35,36,31,0.55); display:flex; align-items:center; justify-content:center; z-index:50; padding:20px;}
+  .modal{background:var(--card); border-radius:12px; padding:28px 30px; width:100%; max-width:560px; max-height:88vh; overflow-y:auto;}
+  .modal.wide{max-width:760px;}
+  .modal-title{font-size:19px; font-weight:600; margin:0 0 18px;}
+
+  /* Challan / lorry receipt card - signature element */
+  .challan{
+    position:relative; background:var(--card); border:1px solid var(--line); border-radius:4px;
+    padding:16px 18px 14px; margin-bottom:14px;
+  }
+  .challan::before, .challan::after{
+    content:""; position:absolute; top:50%; width:14px; height:14px; background:var(--bg);
+    border:1px solid var(--line); border-radius:50%; transform:translateY(-50%);
+  }
+  .challan::before{left:-8px;} .challan::after{right:-8px;}
+  .challan-top{display:flex; justify-content:space-between; align-items:flex-start; border-bottom:1px dashed var(--line); padding-bottom:10px; margin-bottom:10px;}
+  .lorry-badge{
+    background:var(--rust); color:#F5EFE3; font-size:10.5px; font-weight:700; letter-spacing:1.2px;
+    padding:4px 9px; border-radius:3px; transform:rotate(-2deg); display:inline-block;
+  }
+  .challan-meta{font-size:12px; color:var(--ink-soft); margin-top:4px;}
+  .item-row{display:flex; justify-content:space-between; font-size:13.5px; padding:5px 0; border-bottom:1px solid var(--line-soft);}
+  .item-row:last-child{border-bottom:none;}
+  .item-name{font-weight:600;}
+  .item-detail{color:var(--ink-soft); font-size:12px;}
+  .challan-total{display:flex; justify-content:space-between; margin-top:10px; padding-top:10px; border-top:1px solid var(--line); font-weight:700;}
+
+  .empty{text-align:center; padding:50px 20px; color:var(--ink-soft);}
+  .empty-title{font-family:'Fraunces',serif; font-size:18px; color:var(--ink); margin-bottom:6px;}
+
+  .tag{display:inline-block; padding:2px 8px; border-radius:20px; font-size:11px; font-weight:600;}
+  .tag.active{background:#E1E8DD; color:var(--leaf);}
+  .tag.inactive{background:#EEE; color:#999;}
+  .status-badge{display:inline-flex; align-items:center; gap:5px; padding:3px 10px; border-radius:20px; font-size:11px; font-weight:700; letter-spacing:.3px;}
+  .status-badge.open{background:#E1E8DD; color:var(--leaf);}
+  .status-badge.open::before{content:''; width:6px; height:6px; border-radius:50%; background:var(--leaf);}
+  .status-badge.closed{background:#EAE6D8; color:var(--ink-soft);}
+  .status-badge.closed::before{content:''; width:6px; height:6px; border-radius:50%; background:var(--ink-soft);}
+  .cycle-filters{display:flex; gap:4px; margin-bottom:18px;}
+  .item-remaining{font-size:11px; color:var(--leaf); font-weight:600;}
+  .item-remaining.zero{color:var(--ink-soft);}
+  .dispatch-link{background:none; border:none; color:var(--gold-deep); font-size:11.5px; font-weight:600; cursor:pointer; padding:0; margin-left:8px;}
+  .dispatch-log{font-size:11.5px; color:var(--ink-soft); margin-top:2px;}
+
+  .tabs{display:flex; gap:4px; margin-bottom:20px; border-bottom:1px solid var(--line);}
+  .tab{all:unset; cursor:pointer; padding:9px 16px; font-size:13.5px; color:var(--ink-soft); border-bottom:2px solid transparent; margin-bottom:-1px;}
+  .tab.active{color:var(--ink); font-weight:600; border-bottom-color:var(--gold);}
+
+  .mini-item-list{margin:10px 0 16px; display:flex; flex-direction:column; gap:6px;}
+  .mini-item{display:flex; justify-content:space-between; align-items:center; background:var(--bg); border-radius:6px; padding:8px 12px; font-size:13px;}
+  .mini-item button{all:unset; cursor:pointer; color:var(--danger); font-size:12px;}
+
+  ::placeholder{color:#B4AF9C;}
+  .helper{font-size:12px; color:var(--ink-soft); margin-top:-8px; margin-bottom:14px;}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="sidebar">
+    <div class="brand">
+      <svg class="brand-mark" viewBox="0 0 40 40" fill="none">
+        <circle cx="20" cy="20" r="19" stroke="#B8860B" stroke-width="1.4"/>
+        <path d="M20 8 C24 14 24 20 20 32 C16 20 16 14 20 8 Z" fill="#B8860B"/>
+        <path d="M20 8 C24 14 24 20 20 32" stroke="#8A6508" stroke-width="0.8" fill="none"/>
+      </svg>
+      <div class="brand-title">Annapurna</div>
+      <div class="brand-sub">Business Ledger</div>
+    </div>
+    <div class="nav" id="nav"></div>
+    <div class="sidebar-foot">Data saved automatically on this device.</div>
+  </div>
+  <div class="main" id="main"></div>
+</div>
+
+<script>
+const STORAGE_KEY = 'annapurna:data';
+let DATA = { products: [], cycles: [] };
+let currentPage = 'dashboard';
+let cycleDraft = null; // in-progress cycle being built
+let reportTab = 'product';
+
+// ---------- Persistence ----------
+async function loadData(){
+  try{
+    const res = await window.storage.get(STORAGE_KEY);
+    if(res && res.value){ DATA = JSON.parse(res.value); }
+  }catch(e){ /* no data yet */ }
+  render();
+}
+async function saveData(){
+  try{
+    await window.storage.set(STORAGE_KEY, JSON.stringify(DATA));
+  }catch(e){ console.error('save failed', e); }
+}
+function uid(prefix){ return prefix + '_' + Math.random().toString(36).slice(2,9); }
+
+// ---------- Derived data helpers ----------
+function fmtDate(d){
+  const dt = new Date(d);
+  return dt.toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'});
+}
+function fmtMoney(n){
+  if(n===undefined||n===null||isNaN(n)) return '—';
+  return '₹' + Math.round(n).toLocaleString('en-IN');
+}
+function fmtNum(n, d=0){
+  if(n===undefined||n===null||isNaN(n)) return '—';
+  return n.toLocaleString('en-IN', {maximumFractionDigits:d});
+}
+function allItems(){
+  // flatten every purchase line across cycles, with cycle context attached
+  const rows = [];
+  DATA.cycles.forEach(c => {
+    (c.items||[]).forEach(it => {
+      rows.push({...it, lorryNo:c.lorryNo, date:c.date, supplier:c.supplier, cycleId:c.id});
+    });
+  });
+  return rows;
+}
+function itemSoldKg(item){
+  return (item.dispatches||[]).reduce((s,d)=>s+Number(d.kg||0),0);
+}
+function itemRemainingKg(item){
+  const rem = Number(item.kg||0) - itemSoldKg(item);
+  return rem > 0 ? rem : 0;
+}
+function itemRemainingBags(item){
+  const kg = Number(item.kg||0);
+  if(kg<=0) return Number(item.bags||0);
+  return Math.round(Number(item.bags||0) * (itemRemainingKg(item)/kg));
+}
+function cycleRemainingKg(cycle){
+  return (cycle.items||[]).reduce((s,it)=>s+itemRemainingKg(it),0);
+}
+function cycleDays(cycle){
+  const start = new Date(cycle.date);
+  const end = (cycle.status==='closed' && cycle.closeDate) ? new Date(cycle.closeDate) : new Date();
+  const diff = Math.floor((end-start)/86400000);
+  return diff < 0 ? 0 : diff;
+}
+function toggleCycleStatus(id){
+  const c = DATA.cycles.find(x=>x.id===id);
+  if(!c) return;
+  if(c.status==='closed'){ c.status='open'; c.closeDate=null; }
+  else{ c.status='closed'; c.closeDate=new Date().toISOString().slice(0,10); }
+  saveData(); render();
+}
+function productStats(productId){
+  const rows = allItems().filter(r => r.productId === productId).sort((a,b)=> new Date(b.date)-new Date(a.date));
+  const totalKg = rows.reduce((s,r)=>s+Number(r.kg||0),0);
+  const totalBags = rows.reduce((s,r)=>s+Number(r.bags||0),0);
+  const totalValue = rows.reduce((s,r)=>s+Number(r.kg||0)*Number(r.pricePerKg||0),0);
+  const avgCost = totalKg > 0 ? totalValue/totalKg : 0;
+  const prices = rows.map(r=>Number(r.pricePerKg||0)).filter(p=>p>0);
+  const stockKg = rows.reduce((s,r)=>s+itemRemainingKg(r),0);
+  const stockBags = rows.reduce((s,r)=>s+itemRemainingBags(r),0);
+  return {
+    rows, totalKg, totalBags, avgCost, stockKg, stockBags,
+    lastPrice: rows[0]? Number(rows[0].pricePerKg) : null,
+    highest: prices.length? Math.max(...prices): null,
+    lowest: prices.length? Math.min(...prices): null,
+  };
+}
+function stockByProduct(){
+  return DATA.products.map(p=>({product:p, stats:productStats(p.id)})).filter(x=>x.stats.totalKg>0);
+}
+function supplierList(){
+  const set = new Set();
+  DATA.cycles.forEach(c=>{ if(c.supplier) set.add(c.supplier); });
+  return [...set].sort();
+}
+function supplierReport(supplier){
+  const rows = allItems().filter(r=>r.supplier===supplier);
+  const byProduct = {};
+  rows.forEach(r=>{
+    if(!byProduct[r.productName]) byProduct[r.productName] = {kg:0,bags:0,value:0};
+    byProduct[r.productName].kg += Number(r.kg||0);
+    byProduct[r.productName].bags += Number(r.bags||0);
+    byProduct[r.productName].value += Number(r.kg||0)*Number(r.pricePerKg||0);
+  });
+  return byProduct;
+}
+function monthKey(d){ const dt=new Date(d); return dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0'); }
+function monthLabel(key){ const [y,m]=key.split('-'); return new Date(y,m-1,1).toLocaleDateString('en-GB',{month:'long',year:'numeric'}); }
+function monthlyReport(key){
+  const rows = allItems().filter(r=>monthKey(r.date)===key);
+  const byProduct = {};
+  let totalValue = 0;
+  rows.forEach(r=>{
+    if(!byProduct[r.productName]) byProduct[r.productName] = {kg:0,bags:0,value:0};
+    byProduct[r.productName].kg += Number(r.kg||0);
+    byProduct[r.productName].bags += Number(r.bags||0);
+    const val = Number(r.kg||0)*Number(r.pricePerKg||0);
+    byProduct[r.productName].value += val;
+    totalValue += val;
+  });
+  return {byProduct, totalValue, cycleCount: new Set(rows.map(r=>r.cycleId)).size};
+}
+function allMonths(){
+  const set = new Set(DATA.cycles.map(c=>monthKey(c.date)));
+  return [...set].sort().reverse();
+}
+function dailyReport(dateStr){
+  const cycles = DATA.cycles.filter(c=>c.date===dateStr);
+  const rows = allItems().filter(r=>r.date===dateStr);
+  const totalKg = rows.reduce((s,r)=>s+Number(r.kg||0),0);
+  const totalBags = rows.reduce((s,r)=>s+Number(r.bags||0),0);
+  const totalValue = rows.reduce((s,r)=>s+Number(r.kg||0)*Number(r.pricePerKg||0),0);
+  return {cycles, totalKg, totalBags, totalValue, productCount: new Set(rows.map(r=>r.productId)).size};
+}
+function allDates(){
+  const set = new Set(DATA.cycles.map(c=>c.date));
+  return [...set].sort().reverse();
+}
+
+// ---------- Rendering shell ----------
+const NAV_ITEMS = [
+  {id:'dashboard', label:'Dashboard', icon:'◆'},
+  {id:'products', label:'Products', icon:'▤'},
+  {id:'cycles', label:'Cycles', icon:'🚚'},
+  {id:'suppliers', label:'Suppliers', icon:'👤'},
+  {id:'reports', label:'Reports', icon:'▦'},
+];
+
+function render(){
+  renderNav();
+  const main = document.getElementById('main');
+  if(currentPage==='dashboard') main.innerHTML = pageDashboard();
+  else if(currentPage==='products') main.innerHTML = pageProducts();
+  else if(currentPage==='cycles') main.innerHTML = pageCycles();
+  else if(currentPage==='suppliers') main.innerHTML = pageSuppliers();
+  else if(currentPage==='reports') main.innerHTML = pageReports();
+}
+
+function renderNav(){
+  const nav = document.getElementById('nav');
+  nav.innerHTML = NAV_ITEMS.map(n => `
+    <button class="${n.id===currentPage?'active':''}" onclick="goTo('${n.id}')">
+      <span class="nav-icon">${n.icon}</span> ${n.label}
+    </button>`).join('');
+}
+function goTo(page){ currentPage = page; render(); }
+
+// ---------- Dashboard ----------
+function pageDashboard(){
+  const now = new Date();
+  const thisMonthKey = monthKey(now.toISOString());
+  const mr = monthlyReport(thisMonthKey);
+  const recentCycles = [...DATA.cycles].sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,4);
+  const openCount = DATA.cycles.filter(c=>c.status!=='closed').length;
+  const closedCount = DATA.cycles.filter(c=>c.status==='closed').length;
+  const stock = stockByProduct();
+
+  return `
+    <div class="page-head">
+      <div>
+        <h1 class="page-title">Dashboard</h1>
+        <div class="page-sub">${monthLabel(thisMonthKey)} at a glance</div>
+      </div>
+      <button class="btn gold" onclick="goTo('cycles')">+ New Cycle (Lorry)</button>
+    </div>
+
+    <div class="grid cols-4" style="margin-bottom:18px;">
+      <div class="card"><div class="stat-label">Active cycles</div><div class="stat-value">${openCount}</div></div>
+      <div class="card"><div class="stat-label">Closed cycles</div><div class="stat-value">${closedCount}</div></div>
+      <div class="card"><div class="stat-label">Purchase value (month)</div><div class="stat-value small">${fmtMoney(mr.totalValue)}</div></div>
+      <div class="card"><div class="stat-label">Suppliers</div><div class="stat-value">${supplierList().length}</div></div>
+    </div>
+
+    <h3 style="margin:26px 0 12px;">Stock in Hand</h3>
+    ${stock.length===0 ? emptyState('No stock yet','Stock appears here once you record a cycle.') : `
+    <div class="card" style="margin-bottom:26px;">
+      <table>
+        <thead><tr><th>Product</th><th>Stock (Kg)</th><th>Stock (Bags)</th></tr></thead>
+        <tbody>
+          ${stock.sort((a,b)=>b.stats.stockKg-a.stats.stockKg).map(s=>`
+            <tr class="clickable" onclick="openProductDetail('${s.product.id}')">
+              <td><strong>${s.product.name}</strong></td>
+              <td class="num">${fmtNum(s.stats.stockKg)}</td>
+              <td class="num">${fmtNum(s.stats.stockBags)}</td>
+            </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>`}
+
+    <h3 style="margin:26px 0 12px;">Recent Cycles</h3>
+    ${recentCycles.length===0 ? emptyState('No cycles yet', 'Add your first lorry entry to get started.') :
+      recentCycles.map(c=>challanCard(c)).join('')}
+  `;
+}
+
+function emptyState(title, sub){
+  return `<div class="card empty"><div class="empty-title">${title}</div><div>${sub}</div></div>`;
+}
+
+function challanCard(cycle){
+  const total = (cycle.items||[]).reduce((s,it)=>s+Number(it.kg||0)*Number(it.pricePerKg||0),0);
+  const isClosed = cycle.status==='closed';
+  const days = cycleDays(cycle);
+  const remaining = cycleRemainingKg(cycle);
+  return `
+    <div class="challan">
+      <div class="challan-top">
+        <div>
+          <span class="lorry-badge">${cycle.lorryNo || 'LORRY'}</span>
+          <span class="status-badge ${isClosed?'closed':'open'}" style="margin-left:8px;">${isClosed? 'Closed':'Active'}</span>
+          <div class="challan-meta">Started ${fmtDate(cycle.date)} ${cycle.supplier? '· '+cycle.supplier : ''} · ${isClosed? 'ran '+days+' day'+(days===1?'':'s') : 'day '+(days+1)+' of cycle'}</div>
+        </div>
+        <div style="text-align:right; display:flex; gap:8px;">
+          <button class="btn ghost small" onclick="toggleCycleStatus('${cycle.id}')">${isClosed? 'Reopen':'Close Cycle'}</button>
+          <button class="btn ghost small" onclick="deleteCycle('${cycle.id}')">Delete</button>
+        </div>
+      </div>
+      ${(cycle.items||[]).map((it,idx)=>{
+        const rem = itemRemainingKg(it);
+        return `
+        <div class="item-row" style="flex-direction:column; align-items:stretch;">
+          <div style="display:flex; justify-content:space-between;">
+            <div>
+              <div class="item-name">${it.productName}</div>
+              <div class="item-detail">${it.bags||0} bags · ${fmtNum(it.kg)} kg${it.quality? ' · '+it.quality:''}${it.remarks? ' · '+it.remarks:''}</div>
+            </div>
+            <div class="num">${fmtMoney(it.pricePerKg)}/kg</div>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:4px;">
+            <span class="item-remaining ${rem<=0?'zero':''}">${rem<=0? 'Fully dispatched' : fmtNum(rem)+' kg in stock'}</span>
+            <button class="dispatch-link" onclick="openDispatchModal('${cycle.id}',${idx})">+ Dispatch</button>
+          </div>
+          ${(it.dispatches||[]).length? `<div class="dispatch-log">${it.dispatches.map(d=>`${fmtDate(d.date)}: ${fmtNum(d.kg)} kg${d.note? ' — '+d.note:''}`).join(' · ')}</div>` : ''}
+        </div>
+      `;}).join('')}
+      <div class="challan-total"><span>Total value</span><span class="mono">${fmtMoney(total)}</span></div>
+      ${remaining>0 ? `<div class="helper" style="margin-top:6px;">${fmtNum(remaining)} kg still in stock from this cycle</div>` : ''}
+    </div>
+  `;
+}
+function openDispatchModal(cycleId, itemIdx){
+  const cycle = DATA.cycles.find(c=>c.id===cycleId);
+  const item = cycle.items[itemIdx];
+  const rem = itemRemainingKg(item);
+  showModal(`
+    <div class="modal-title">Dispatch ${item.productName}</div>
+    <div class="helper" style="margin-top:0;">${fmtNum(rem)} kg currently in stock from ${cycle.lorryNo}</div>
+    <div class="field"><label>Quantity dispatched (Kg)</label><input id="d-kg" type="number" min="0" max="${rem}" placeholder="e.g. 500"></div>
+    <div class="field"><label>Note (optional)</label><input id="d-note" placeholder="Buyer / hotel name"></div>
+    <div style="display:flex; gap:10px;">
+      <button class="btn gold" onclick="saveDispatch('${cycleId}',${itemIdx})">Save Dispatch</button>
+      <button class="btn ghost" onclick="closeModal()">Cancel</button>
+    </div>
+  `);
+}
+function saveDispatch(cycleId, itemIdx){
+  const cycle = DATA.cycles.find(c=>c.id===cycleId);
+  const item = cycle.items[itemIdx];
+  const kg = Number(document.getElementById('d-kg').value)||0;
+  const note = document.getElementById('d-note').value.trim();
+  const rem = itemRemainingKg(item);
+  if(kg<=0){ alert('Enter a quantity greater than 0.'); return; }
+  if(kg>rem){ alert('Only '+fmtNum(rem)+' kg is in stock for this item.'); return; }
+  if(!item.dispatches) item.dispatches = [];
+  item.dispatches.push({date:new Date().toISOString().slice(0,10), kg, note});
+  saveData(); closeModal(); render();
+}
+
+function deleteCycle(id){
+  if(!confirm('Delete this cycle? This cannot be undone.')) return;
+  DATA.cycles = DATA.cycles.filter(c=>c.id!==id);
+  saveData(); render();
+}
+
+// ---------- Products ----------
+function pageProducts(){
+  return `
+    <div class="page-head">
+      <div>
+        <h1 class="page-title">Products</h1>
+        <div class="page-sub">Master list — name, alias and unit only. No prices here.</div>
+      </div>
+      <button class="btn gold" onclick="openAddProductModal()">+ Add Product</button>
+    </div>
+    <div class="card">
+      ${DATA.products.length===0 ? emptyState('No products yet','Add Groundnut, Toor Dal, Onion, Garlic — whatever you trade.') : `
+      <table>
+        <thead><tr><th>Name</th><th>Alias</th><th>Unit</th><th>Status</th><th>Stock in hand</th></tr></thead>
+        <tbody>
+          ${DATA.products.map(p=>{
+            const st = productStats(p.id);
+            return `<tr class="clickable" onclick="openProductDetail('${p.id}')">
+              <td><strong>${p.name}</strong></td>
+              <td>${p.alias||'—'}</td>
+              <td>${p.unit}</td>
+              <td><span class="tag ${p.active?'active':'inactive'}">${p.active?'Active':'Inactive'}</span></td>
+              <td class="num">${fmtNum(st.stockKg)} kg</td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>`}
+    </div>
+  `;
+}
+
+function openAddProductModal(){
+  showModal(`
+    <div class="modal-title">Add Product</div>
+    <div class="field"><label>Product Name</label><input id="f-name" placeholder="e.g. Groundnut"></div>
+    <div class="field"><label>Alias (optional)</label><input id="f-alias" placeholder="e.g. Peanut"></div>
+    <div class="field">
+      <label>Unit</label>
+      <select id="f-unit">
+        <option value="Kg">Kg only</option>
+        <option value="Bags">Bags only</option>
+        <option value="Kg & Bags" selected>Kg & Bags</option>
+      </select>
+    </div>
+    <div style="display:flex; gap:10px; margin-top:8px;">
+      <button class="btn gold" onclick="saveProduct()">Save Product</button>
+      <button class="btn ghost" onclick="closeModal()">Cancel</button>
+    </div>
+  `);
+}
+function saveProduct(){
+  const name = document.getElementById('f-name').value.trim();
+  if(!name){ alert('Product name is required.'); return; }
+  const alias = document.getElementById('f-alias').value.trim();
+  const unit = document.getElementById('f-unit').value;
+  DATA.products.push({id:uid('prod'), name, alias, unit, active:true});
+  saveData(); closeModal(); render();
+}
+function openProductDetail(id){
+  const p = DATA.products.find(x=>x.id===id);
+  const st = productStats(id);
+  showModal(`
+    <div class="modal-title">${p.name} ${p.alias? '<span style="color:var(--ink-soft); font-weight:400; font-size:14px;">('+p.alias+')</span>':''}</div>
+    <div class="grid cols-3" style="margin-bottom:18px;">
+      <div><div class="stat-label">Stock in hand</div><div class="stat-value small">${fmtNum(st.stockKg)} kg</div><div class="helper" style="margin:2px 0 0;">${fmtNum(st.stockBags)} bags remaining</div></div>
+      <div><div class="stat-label">Total ever purchased</div><div class="stat-value small">${fmtNum(st.totalKg)} kg</div><div class="helper" style="margin:2px 0 0;">${fmtNum(st.totalBags)} bags received</div></div>
+      <div><div class="stat-label">Average cost</div><div class="stat-value small">${fmtMoney(st.avgCost)}/kg</div></div>
+    </div>
+    <div class="grid cols-2" style="margin-bottom:18px;">
+      <div><div class="stat-label">Highest purchase</div><div class="stat-value small">${st.highest?fmtMoney(st.highest)+'/kg':'—'}</div></div>
+      <div><div class="stat-label">Lowest purchase</div><div class="stat-value small">${st.lowest?fmtMoney(st.lowest)+'/kg':'—'}</div></div>
+    </div>
+    <h3 style="margin:0 0 10px; font-size:15px;">Purchase History</h3>
+    ${st.rows.length===0? '<div class="helper">No purchases recorded yet.</div>' : `
+    <table>
+      <thead><tr><th>Date</th><th>Lorry</th><th>Bags</th><th>Kg</th><th>Price/Kg</th><th>Supplier</th></tr></thead>
+      <tbody>
+        ${st.rows.map(r=>`<tr><td>${fmtDate(r.date)}</td><td>${r.lorryNo}</td><td class="num">${r.bags||0}</td><td class="num">${fmtNum(r.kg)}</td><td class="num">${fmtMoney(r.pricePerKg)}</td><td>${r.supplier||'—'}</td></tr>`).join('')}
+      </tbody>
+    </table>`}
+    <div style="margin-top:20px;"><button class="btn ghost" onclick="closeModal()">Close</button></div>
+  `, true);
+}
+
+// ---------- Cycles ----------
+let cycleFilter = 'all';
+function setCycleFilter(f){ cycleFilter = f; render(); }
+function pageCycles(){
+  let sorted = [...DATA.cycles].sort((a,b)=>new Date(b.date)-new Date(a.date));
+  if(cycleFilter==='open') sorted = sorted.filter(c=>c.status!=='closed');
+  if(cycleFilter==='closed') sorted = sorted.filter(c=>c.status==='closed');
+  return `
+    <div class="page-head">
+      <div>
+        <h1 class="page-title">Cycles</h1>
+        <div class="page-sub">Every lorry arrival, with all products it carried.</div>
+      </div>
+      <button class="btn gold" onclick="openNewCycleModal()">+ New Cycle</button>
+    </div>
+    <div class="cycle-filters">
+      <button class="tab ${cycleFilter==='all'?'active':''}" onclick="setCycleFilter('all')">All</button>
+      <button class="tab ${cycleFilter==='open'?'active':''}" onclick="setCycleFilter('open')">Active</button>
+      <button class="tab ${cycleFilter==='closed'?'active':''}" onclick="setCycleFilter('closed')">Closed</button>
+    </div>
+    ${sorted.length===0 ? emptyState('No cycles here', 'Press "+ New Cycle" when a lorry arrives.') :
+      sorted.map(c=>challanCard(c)).join('')}
+  `;
+}
+
+function openNewCycleModal(){
+  if(DATA.products.length===0){
+    alert('Add at least one product first, in the Products tab.');
+    return;
+  }
+  cycleDraft = { lorryNo:'', date: new Date().toISOString().slice(0,10), supplier:'', status:'open', closeDate:null, items: [] };
+  renderCycleModal();
+}
+function renderCycleModal(){
+  const d = cycleDraft;
+  showModal(`
+    <div class="modal-title">New Cycle</div>
+    <div class="field-row">
+      <div class="field"><label>Lorry No</label><input id="c-lorry" value="${d.lorryNo}" placeholder="Lorry001" oninput="cycleDraft.lorryNo=this.value"></div>
+      <div class="field"><label>Cycle Start Date</label><input id="c-date" type="date" value="${d.date}" oninput="cycleDraft.date=this.value"></div>
+      <div class="field"><label>Supplier</label><input id="c-supplier" value="${d.supplier}" placeholder="Ramesh Traders" oninput="cycleDraft.supplier=this.value"></div>
+    </div>
+
+    <div class="mini-item-list">
+      ${d.items.length===0 ? '<div class="helper" style="margin:0;">No items added yet.</div>' : d.items.map((it,idx)=>`
+        <div class="mini-item">
+          <span>${it.productName} — ${it.bags||0} bags, ${it.kg} kg @ ${fmtMoney(it.pricePerKg)}/kg</span>
+          <button onclick="removeDraftItem(${idx})">Remove</button>
+        </div>
+      `).join('')}
+    </div>
+
+    <div style="border-top:1px solid var(--line); padding-top:14px; margin-top:6px;">
+      <label style="margin-bottom:8px;">Add Product to this Cycle</label>
+      <div class="field-row">
+        <select id="i-product">
+          ${DATA.products.filter(p=>p.active).map(p=>`<option value="${p.id}">${p.name}</option>`).join('')}
+        </select>
+        <input id="i-bags" type="number" min="0" placeholder="Bags">
+        <input id="i-kg" type="number" min="0" placeholder="Weight (Kg)">
+        <input id="i-price" type="number" min="0" placeholder="Price/Kg (₹)">
+      </div>
+      <div class="field-row" style="margin-top:10px;">
+        <input id="i-quality" placeholder="Quality (e.g. A Grade)">
+        <input id="i-remarks" placeholder="Remarks (e.g. Moisture 8%)">
+        <button class="btn ghost" onclick="addDraftItem()">+ Add Item</button>
+      </div>
+    </div>
+
+    <div style="display:flex; gap:10px; margin-top:20px;">
+      <button class="btn gold" onclick="saveCycle()">Save Cycle</button>
+      <button class="btn ghost" onclick="cycleDraft=null; closeModal();">Cancel</button>
+    </div>
+  `, true);
+}
+function addDraftItem(){
+  const productId = document.getElementById('i-product').value;
+  const product = DATA.products.find(p=>p.id===productId);
+  const bags = Number(document.getElementById('i-bags').value)||0;
+  const kg = Number(document.getElementById('i-kg').value)||0;
+  const pricePerKg = Number(document.getElementById('i-price').value)||0;
+  const quality = document.getElementById('i-quality').value.trim();
+  const remarks = document.getElementById('i-remarks').value.trim();
+  if(!kg && !bags){ alert('Enter bags or weight for this item.'); return; }
+  cycleDraft.items.push({productId, productName: product.name, bags, kg, pricePerKg, quality, remarks});
+  renderCycleModal();
+}
+function removeDraftItem(idx){
+  cycleDraft.items.splice(idx,1);
+  renderCycleModal();
+}
+function saveCycle(){
+  if(!cycleDraft.lorryNo.trim()){ alert('Lorry number is required.'); return; }
+  if(cycleDraft.items.length===0){ alert('Add at least one product before saving.'); return; }
+  DATA.cycles.push({id:uid('cycle'), ...cycleDraft});
+  cycleDraft = null;
+  saveData(); closeModal(); render();
+}
+
+// ---------- Suppliers ----------
+function pageSuppliers(){
+  const list = supplierList();
+  return `
+    <div class="page-head">
+      <div><h1 class="page-title">Suppliers</h1><div class="page-sub">Auto-built from your cycles — nothing to add manually.</div></div>
+    </div>
+    ${list.length===0 ? emptyState('No suppliers yet','Suppliers appear here once you record a cycle with a supplier name.') : `
+    <div class="grid cols-3">
+      ${list.map(s=>{
+        const rep = supplierReport(s);
+        const totalKg = Object.values(rep).reduce((sum,v)=>sum+v.kg,0);
+        return `<div class="card" style="cursor:pointer;" onclick="openSupplierDetail('${s.replace(/'/g,"\\'")}')">
+          <div class="stat-label">${s}</div>
+          <div class="stat-value small">${fmtNum(totalKg)} kg</div>
+          <div class="helper" style="margin:4px 0 0;">${Object.keys(rep).length} product(s) supplied</div>
+        </div>`;
+      }).join('')}
+    </div>`}
+  `;
+}
+function openSupplierDetail(supplier){
+  const rep = supplierReport(supplier);
+  showModal(`
+    <div class="modal-title">${supplier}</div>
+    <table>
+      <thead><tr><th>Product</th><th>Bags</th><th>Kg</th><th>Value</th></tr></thead>
+      <tbody>
+        ${Object.entries(rep).map(([name,v])=>`<tr><td>${name}</td><td class="num">${fmtNum(v.bags)}</td><td class="num">${fmtNum(v.kg)}</td><td class="num">${fmtMoney(v.value)}</td></tr>`).join('')}
+      </tbody>
+    </table>
+    <div style="margin-top:20px;"><button class="btn ghost" onclick="closeModal()">Close</button></div>
+  `);
+}
+
+// ---------- Reports ----------
+function pageReports(){
+  return `
+    <div class="page-head"><div><h1 class="page-title">Reports</h1><div class="page-sub">Everything below is computed automatically from your cycles.</div></div></div>
+    <div class="tabs">
+      <button class="tab ${reportTab==='product'?'active':''}" onclick="setReportTab('product')">Product</button>
+      <button class="tab ${reportTab==='supplier'?'active':''}" onclick="setReportTab('supplier')">Supplier</button>
+      <button class="tab ${reportTab==='monthly'?'active':''}" onclick="setReportTab('monthly')">Monthly</button>
+      <button class="tab ${reportTab==='daily'?'active':''}" onclick="setReportTab('daily')">Daily</button>
+    </div>
+    <div id="report-body">${renderReportBody()}</div>
+  `;
+}
+function setReportTab(t){ reportTab = t; render(); }
+function renderReportBody(){
+  if(DATA.cycles.length===0) return emptyState('No data yet','Reports will appear once you save your first cycle.');
+  if(reportTab==='product') return reportProductTab();
+  if(reportTab==='supplier') return reportSupplierTab();
+  if(reportTab==='monthly') return reportMonthlyTab();
+  if(reportTab==='daily') return reportDailyTab();
+}
+function reportProductTab(){
+  if(DATA.products.length===0) return emptyState('No products','Add products first.');
+  const pid = window.__selectedProduct || DATA.products[0].id;
+  const st = productStats(pid);
+  return `
+    <div class="card">
+      <div class="field" style="max-width:280px;">
+        <label>Product</label>
+        <select onchange="window.__selectedProduct=this.value; render();">
+          ${DATA.products.map(p=>`<option value="${p.id}" ${p.id===pid?'selected':''}>${p.name}</option>`).join('')}
+        </select>
+      </div>
+      <div class="grid cols-4" style="margin:16px 0;">
+        <div><div class="stat-label">Total bought</div><div class="stat-value small">${fmtNum(st.totalKg/1000,2)} T</div></div>
+        <div><div class="stat-label">Average cost</div><div class="stat-value small">${fmtMoney(st.avgCost)}</div></div>
+        <div><div class="stat-label">Highest</div><div class="stat-value small">${st.highest?fmtMoney(st.highest):'—'}</div></div>
+        <div><div class="stat-label">Lowest</div><div class="stat-value small">${st.lowest?fmtMoney(st.lowest):'—'}</div></div>
+      </div>
+      <table>
+        <thead><tr><th>Date</th><th>Lorry</th><th>Bags</th><th>Kg</th><th>Price/Kg</th></tr></thead>
+        <tbody>${st.rows.map(r=>`<tr><td>${fmtDate(r.date)}</td><td>${r.lorryNo}</td><td class="num">${r.bags||0}</td><td class="num">${fmtNum(r.kg)}</td><td class="num">${fmtMoney(r.pricePerKg)}</td></tr>`).join('')}</tbody>
+      </table>
+    </div>
+  `;
+}
+function reportSupplierTab(){
+  const list = supplierList();
+  if(list.length===0) return emptyState('No suppliers yet','');
+  const sup = window.__selectedSupplier || list[0];
+  const rep = supplierReport(sup);
+  return `
+    <div class="card">
+      <div class="field" style="max-width:280px;">
+        <label>Supplier</label>
+        <select onchange="window.__selectedSupplier=this.value; render();">
+          ${list.map(s=>`<option value="${s}" ${s===sup?'selected':''}>${s}</option>`).join('')}
+        </select>
+      </div>
+      <table style="margin-top:14px;">
+        <thead><tr><th>Product</th><th>Bags</th><th>Kg</th><th>Value</th></tr></thead>
+        <tbody>${Object.entries(rep).map(([name,v])=>`<tr><td>${name}</td><td class="num">${fmtNum(v.bags)}</td><td class="num">${fmtNum(v.kg)}</td><td class="num">${fmtMoney(v.value)}</td></tr>`).join('')}</tbody>
+      </table>
+    </div>
+  `;
+}
+function reportMonthlyTab(){
+  const months = allMonths();
+  const key = window.__selectedMonth || months[0];
+  const mr = monthlyReport(key);
+  return `
+    <div class="card">
+      <div class="field" style="max-width:280px;">
+        <label>Month</label>
+        <select onchange="window.__selectedMonth=this.value; render();">
+          ${months.map(m=>`<option value="${m}" ${m===key?'selected':''}>${monthLabel(m)}</option>`).join('')}
+        </select>
+      </div>
+      <div class="grid cols-2" style="margin:16px 0;">
+        <div><div class="stat-label">Cycles this month</div><div class="stat-value small">${mr.cycleCount}</div></div>
+        <div><div class="stat-label">Purchase value</div><div class="stat-value small">${fmtMoney(mr.totalValue)}</div></div>
+      </div>
+      <table>
+        <thead><tr><th>Product</th><th>Bags</th><th>Kg</th><th>Value</th></tr></thead>
+        <tbody>${Object.entries(mr.byProduct).map(([name,v])=>`<tr><td>${name}</td><td class="num">${fmtNum(v.bags)}</td><td class="num">${fmtNum(v.kg)}</td><td class="num">${fmtMoney(v.value)}</td></tr>`).join('')}</tbody>
+      </table>
+    </div>
+  `;
+}
+function reportDailyTab(){
+  const dates = allDates();
+  const date = window.__selectedDate || dates[0];
+  const dr = dailyReport(date);
+  return `
+    <div class="card">
+      <div class="field" style="max-width:280px;">
+        <label>Date</label>
+        <select onchange="window.__selectedDate=this.value; render();">
+          ${dates.map(d=>`<option value="${d}" ${d===date?'selected':''}>${fmtDate(d)}</option>`).join('')}
+        </select>
+      </div>
+      <div class="grid cols-3" style="margin:16px 0;">
+        <div><div class="stat-label">Products</div><div class="stat-value small">${dr.productCount}</div></div>
+        <div><div class="stat-label">Total weight</div><div class="stat-value small">${fmtNum(dr.totalKg)} kg</div></div>
+        <div><div class="stat-label">Purchase value</div><div class="stat-value small">${fmtMoney(dr.totalValue)}</div></div>
+      </div>
+      ${dr.cycles.map(c=>challanCard(c)).join('')}
+    </div>
+  `;
+}
+
+// ---------- Modal helpers ----------
+function showModal(html, wide){
+  let bg = document.getElementById('modal-bg');
+  if(!bg){
+    bg = document.createElement('div');
+    bg.id = 'modal-bg';
+    bg.className = 'modal-bg';
+    document.body.appendChild(bg);
+  }
+  bg.innerHTML = `<div class="modal ${wide?'wide':''}">${html}</div>`;
+  bg.style.display = 'flex';
+  bg.onclick = (e)=>{ if(e.target===bg) closeModal(); };
+}
+function closeModal(){
+  const bg = document.getElementById('modal-bg');
+  if(bg) bg.style.display = 'none';
+}
+
+// ---------- Init ----------
+loadData();
+
+// Register service worker for offline + installable app experience
+if('serviceWorker' in navigator){
+  window.addEventListener('load', ()=>{
+    navigator.serviceWorker.register('service-worker.js').catch(err=>console.warn('SW registration failed', err));
+  });
+}
+
+</script>
+</body>
+</html>
