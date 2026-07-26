@@ -1,0 +1,16 @@
+{
+  "name": "Annapurna Business",
+  "short_name": "Annapurna",
+  "description": "Groundnut & grain trading ledger — cycles, stock, suppliers, reports.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#EFEADD",
+  "theme_color": "#23241F",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
